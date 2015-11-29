@@ -49,6 +49,7 @@ class Oauth1 implements SubscriberInterface
      * - consumer_key: Consumer key string. Defaults to "anonymous".
      * - consumer_secret: Consumer secret. Defaults to "anonymous".
      * - private_key_file: The location of your private key file (RSA-SHA1 signature method only)
+     * - private_key_string: The location of your private key file (RSA-SHA1 signature method only)
      * - private_key_passphrase: The passphrase for your private key file (RSA-SHA1 signature method only)
      * - token: Client token
      * - token_secret: Client secret token
@@ -248,8 +249,14 @@ class Oauth1 implements SubscriberInterface
                 . 'requires the OpenSSL extension.');
         }
 
+        if (isset($this->config['private_key_file'])) {
+            $privateKeyFile = file_get_contents($this->config['private_key_file']);
+        } else {
+            $privateKeyFile = $this->config['private_key_string'];
+        }
+
         $privateKey = openssl_pkey_get_private(
-            file_get_contents($this->config['private_key_file']),
+            $privateKeyFile,
             $this->config['private_key_passphrase']
         );
 
